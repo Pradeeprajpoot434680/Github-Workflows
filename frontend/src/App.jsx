@@ -55,7 +55,7 @@ function App() {
     <div className="container">
       <div className="card">
 
-        <h1>🚀 GitHub Actions Demo</h1>
+        <h1> GitHub Actions Demo</h1>
 
         <form onSubmit={addUser} className="form">
 
