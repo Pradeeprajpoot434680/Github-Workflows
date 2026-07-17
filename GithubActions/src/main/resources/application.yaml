@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: GithubActions
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/github_actions
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
