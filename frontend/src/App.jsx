@@ -11,8 +11,8 @@ function App() {
     password: "",
   });
 
-  const API = "http://localhost:8080/users";
-
+  // const API = "http://localhost:8080/users";
+  const API = "http://13.207.150.137:8080/users";
   const getUsers = async () => {
     try {
       const res = await axios.get(API);
