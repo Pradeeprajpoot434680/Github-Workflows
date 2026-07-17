@@ -9,14 +9,15 @@ on:
 
 jobs:
 
-  backend-build:
+  build:
 
-    name: Build Spring Boot Backend
+    name: Build Application
 
     runs-on: ubuntu-latest
 
 
     steps:
+
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,23 +30,9 @@ jobs:
           distribution: "temurin"
 
 
-      - name: Build Backend with Maven
+      - name: Build Backend
         working-directory: GithubActions
         run: mvn clean package -DskipTests
-
-
-
-  frontend-build:
-
-    name: Build React Frontend
-
-    runs-on: ubuntu-latest
-
-
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
 
       - name: Setup Node
@@ -54,47 +41,25 @@ jobs:
           node-version: "22"
 
 
-      - name: Install Dependencies
+      - name: Build Frontend
         working-directory: frontend
-        run: npm install
-
-
-      - name: Build React Application
-        working-directory: frontend
-        run: npm run build
-
-
-
-  docker-build:
-
-    name: Build Docker Images
-
-    runs-on: ubuntu-latest
-
-
-    needs:
-      - backend-build
-      - frontend-build
-
-
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+        run: |
+          npm install
+          npm run build
 
 
       - name: Build Backend Docker Image
         run: |
           docker build \
-            -t githubactions-backend:latest \
-            ./GithubActions
+          -t githubactions-backend:latest \
+          ./GithubActions
 
 
       - name: Build Frontend Docker Image
         run: |
           docker build \
-            -t githubactions-frontend:latest \
-            ./frontend
+          -t githubactions-frontend:latest \
+          ./frontend
 
 
       - name: Show Docker Images
