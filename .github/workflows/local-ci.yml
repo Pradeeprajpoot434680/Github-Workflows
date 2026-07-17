@@ -23,6 +23,10 @@ jobs:
         uses: actions/checkout@v4
 
 
+
+      # ---------------- BACKEND ----------------
+
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -30,15 +34,22 @@ jobs:
           distribution: "temurin"
 
 
-      - name: Build Backend
+
+      - name: Build Backend with Maven
         working-directory: GithubActions
         run: mvn clean package -DskipTests
+
+
+
+
+      # ---------------- FRONTEND ----------------
 
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
 
 
       - name: Build Frontend
@@ -48,20 +59,58 @@ jobs:
           npm run build
 
 
+
+
+      # ---------------- DOCKER ----------------
+
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+
+
       - name: Build Backend Docker Image
         run: |
           docker build \
-          -t githubactions-backend:latest \
-          ./GithubActions
+            -t ${{ secrets.DOCKER_USERNAME }}/githubactions-backend:latest \
+            ./GithubActions
+
+
 
 
       - name: Build Frontend Docker Image
         run: |
           docker build \
-          -t githubactions-frontend:latest \
-          ./frontend
+            -t ${{ secrets.DOCKER_USERNAME }}/githubactions-frontend:latest \
+            ./frontend
+
+
+
+
+      # ---------------- PUSH ----------------
+
+
+      - name: Push Backend Image to Docker Hub
+        run: |
+          docker push \
+          ${{ secrets.DOCKER_USERNAME }}/githubactions-backend:latest
+
+
+
+
+      - name: Push Frontend Image to Docker Hub
+        run: |
+          docker push \
+          ${{ secrets.DOCKER_USERNAME }}/githubactions-frontend:latest
+
+
+
+
+      # ---------------- VERIFY ----------------
 
 
       - name: Show Docker Images
         run: docker images
-        
