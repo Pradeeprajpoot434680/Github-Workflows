@@ -9,10 +9,9 @@ on:
 
 jobs:
 
-
   backend-build:
 
-    name: Build Spring Boot
+    name: Build Spring Boot Backend
 
     runs-on: ubuntu-latest
 
@@ -26,61 +25,47 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
 
-      - name: Build Backend
-
+      - name: Build Backend with Maven
         working-directory: GithubActions
-
         run: mvn clean package -DskipTests
 
 
 
   frontend-build:
 
-
-    name: Build React
+    name: Build React Frontend
 
     runs-on: ubuntu-latest
 
 
     steps:
 
-
       - name: Checkout code
         uses: actions/checkout@v4
 
 
-
       - name: Setup Node
-
         uses: actions/setup-node@v4
-
         with:
-          node-version: 22
+          node-version: "22"
 
 
-
-      - name: Install dependencies
-
+      - name: Install Dependencies
         working-directory: frontend
-
         run: npm install
 
 
-
-      - name: Build React
-
+      - name: Build React Application
         working-directory: frontend
-
         run: npm run build
 
 
 
   docker-build:
-
 
     name: Build Docker Images
 
@@ -88,35 +73,29 @@ jobs:
 
 
     needs:
-
       - backend-build
       - frontend-build
 
 
-
     steps:
 
-
       - name: Checkout code
-
         uses: actions/checkout@v4
 
 
-
-      - name: Build Backend Image
-
-        run:
-
+      - name: Build Backend Docker Image
+        run: |
           docker build \
-          -t githubactions-backend \
-          ./GithubActions
+            -t githubactions-backend:latest \
+            ./GithubActions
 
 
-
-      - name: Build Frontend Image
-
-        run:
-
+      - name: Build Frontend Docker Image
+        run: |
           docker build \
-          -t githubactions-frontend \
-          ./frontend
+            -t githubactions-frontend:latest \
+            ./frontend
+
+
+      - name: Show Docker Images
+        run: docker images
